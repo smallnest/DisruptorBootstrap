@@ -13,8 +13,11 @@ import com.lmax.disruptor.dsl.ProducerType;
  * a simple example to show applying Disruptor.
  */
 public class App {
-	public static void handleEvent(ObjectEvent event, long sequence, boolean endOfBatch) {
-		System.out.println(event.getObject());
+	public static void handleEvent1(ObjectEvent event, long sequence, boolean endOfBatch) {
+		System.out.println("handler-1: " + event.getObject());
+	}
+	public static void handleEvent2(ObjectEvent event, long sequence, boolean endOfBatch) {
+		System.out.println("handler-2: " + event.getObject());
 	}
 	
 	private static void produceEvents(Disruptor<ObjectEvent> disruptor) throws InterruptedException {
@@ -36,7 +39,9 @@ public class App {
 		Disruptor<ObjectEvent> disruptor = new Disruptor<>(ObjectEvent::new, bufferSize, executor, 
 				ProducerType.SINGLE, new LiteBlockingWaitStrategy());
 
-		disruptor.handleEventsWith(App::handleEvent);
+		disruptor.handleEventsWith(App::handleEvent1);
+		disruptor.handleEventsWith(App::handleEvent2);
+		
 		//disruptor.handleEventsWith((event, sequence, endOfBatch) -> System.out.println("Event: " + event.getObject()));
 		disruptor.start();
 

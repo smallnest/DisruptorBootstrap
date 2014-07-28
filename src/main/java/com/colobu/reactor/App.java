@@ -15,16 +15,21 @@ import static reactor.event.selector.Selectors.$;
  */
 public class App {
 
-	public static void handleEvent(Event<ObjectEvent> ev) {
-		System.out.println(ev.getData().getObject());
+	public static void handleEvent1(Event<ObjectEvent> ev) {
+		System.out.println("handler-1: " + ev.getData().getObject());
 	}
 
+	public static void handleEvent2(Event<ObjectEvent> ev) {
+		System.out.println("handler-2:" + ev.getData().getObject());
+	}
+	
 	public static void main(String[] args) throws InterruptedException {
 		Environment env = new Environment();
 		Reactor reactor = Reactors.reactor().env(env).dispatcher(Environment.THREAD_POOL).get();
 
 		// topic: parse
-		reactor.on($("parse"), App::handleEvent);
+		reactor.on($("parse"), App::handleEvent1);
+		reactor.on($("parse"), App::handleEvent2);
 
 		// Notify consumers of the 'parse' topic that data is ready
 		// by passing a Supplier<Event<T>> in the form of a lambda
